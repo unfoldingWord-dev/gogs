@@ -171,6 +171,7 @@ func GlobalInit(ctx context.Context) {
 		}
 		mirror_service.InitSyncMirrors()
 		webhook.InitDeliverHooks()
+
 		if err := pull_service.Init(); err != nil {
 			log.Fatal("Failed to initialize test pull requests queue: %v", err)
 		}
@@ -178,6 +179,12 @@ func GlobalInit(ctx context.Context) {
 			log.Fatal("Failed to initialize task scheduler: %v", err)
 		}
 		eventsource.GetManager().Init()
+
+		/*** DCS Customizations ***/
+		//if err := models.InitDoor43Metadata(); err != nil {
+		//	log.Error("InitDoor43Metadata: %v", err)
+		//}
+		/*** END DCS Customizations ***/
 	}
 
 	if err := repo_migrations.Init(); err != nil {

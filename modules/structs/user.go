@@ -30,6 +30,10 @@ type User struct {
 	LastLogin time.Time `json:"last_login,omitempty"`
 	// swagger:strfmt date-time
 	Created time.Time `json:"created,omitempty"`
+	// Repo languages
+	RepoLanguages []string `json:"repo_languages"`
+	// Repo subjects
+	RepoSubjects []string `json:"repo_subjects"`
 }
 
 // MarshalJSON implements the json.Marshaler interface for User, adding field(s) for backward compatibility

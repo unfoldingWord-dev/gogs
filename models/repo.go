@@ -25,6 +25,7 @@ import (
 	"strings"
 	"time"
 
+	"code.gitea.io/gitea/modules/dcs"
 	"code.gitea.io/gitea/modules/log"
 	"code.gitea.io/gitea/modules/markup"
 	"code.gitea.io/gitea/modules/options"
@@ -409,6 +410,102 @@ func (repo *Repository) innerAPIFormat(e Engine, mode AccessMode, isParent bool)
 
 	numReleases, _ := GetReleaseCountByRepoID(repo.ID, FindReleasesOptions{IncludeDrafts: false, IncludeTags: true})
 
+	/* DCS Customizations */
+	catalog := &api.CatalogStages{}
+	prod, err := GetDoor43MetadataByRepoIDAndStage(repo.ID, StageProd)
+	if err != nil {
+		log.Error("GetDoor43MetadataByRepoIDAndStage: %v", err)
+	}
+	preprod, err := GetDoor43MetadataByRepoIDAndStage(repo.ID, StagePreProd)
+	if err != nil {
+		log.Error("GetDoor43MetadataByRepoIDAndStage: %v", err)
+	}
+	draft, err := GetDoor43MetadataByRepoIDAndStage(repo.ID, StageDraft)
+	if err != nil {
+		log.Error("GetDoor43MetadataByRepoIDAndStage: %v", err)
+	}
+	latest, err := GetDoor43MetadataByRepoIDAndStage(repo.ID, StageLatest)
+	if err != nil {
+		log.Error("GetDoor43MetadataByRepoIDAndStage: %v", err)
+	}
+
+	if draft != nil && ((prod != nil && prod.ReleaseDateUnix >= draft.ReleaseDateUnix) ||
+		(preprod != nil && preprod.ReleaseDateUnix >= draft.ReleaseDateUnix)) {
+		draft = nil
+	}
+	if prod != nil && preprod != nil && prod.ReleaseDateUnix >= preprod.ReleaseDateUnix {
+		preprod = nil
+	}
+	if prod != nil {
+		prod.Repo = repo
+		url := prod.GetReleaseURL()
+		catalog.Production = &api.CatalogStage{
+			Tag:        prod.BranchOrTag,
+			ReleaseURL: &url,
+			Released:   prod.GetReleaseDateTime(),
+			ZipballURL: prod.GetZipballURL(),
+			TarballURL: prod.GetTarballURL(),
+		}
+	}
+	if preprod != nil {
+		preprod.Repo = repo
+		url := preprod.GetReleaseURL()
+		catalog.PreProduction = &api.CatalogStage{
+			Tag:        preprod.BranchOrTag,
+			ReleaseURL: &url,
+			Released:   preprod.GetReleaseDateTime(),
+			ZipballURL: preprod.GetZipballURL(),
+			TarballURL: preprod.GetTarballURL(),
+		}
+	}
+	if draft != nil {
+		draft.Repo = repo
+		url := draft.GetReleaseURL()
+		catalog.Draft = &api.CatalogStage{
+			Tag:        draft.BranchOrTag,
+			ReleaseURL: &url,
+			Released:   draft.GetReleaseDateTime(),
+			ZipballURL: draft.GetZipballURL(),
+			TarballURL: draft.GetTarballURL(),
+		}
+	}
+	if latest != nil {
+		latest.Repo = repo
+		catalog.Latest = &api.CatalogStage{
+			Tag:        latest.BranchOrTag,
+			ReleaseURL: nil,
+			Released:   latest.GetReleaseDateTime(),
+			ZipballURL: latest.GetZipballURL(),
+			TarballURL: latest.GetTarballURL(),
+		}
+	}
+
+	metadata, err := getDoor43MetadataByRepoIDAndReleaseID(e, repo.ID, 0)
+	if err != nil && !IsErrDoor43MetadataNotExist(err) {
+		log.Error("getDoor43MetadataByRepoIDAndReleaseID: %v", err)
+	}
+	if metadata == nil {
+		metadata, err = repo.getLatestPreProdCatalogMetadata(e)
+		if err != nil {
+			log.Error("getLatestPreProdCatalogMetadata: %v", err)
+		}
+	}
+
+	var language, title, subject, checkingLevel string
+	var books []string
+	if metadata != nil {
+		language = (*metadata.Metadata)["dublin_core"].(map[string]interface{})["language"].(map[string]interface{})["identifier"].(string)
+		title = (*metadata.Metadata)["dublin_core"].(map[string]interface{})["title"].(string)
+		subject = (*metadata.Metadata)["dublin_core"].(map[string]interface{})["subject"].(string)
+		books = metadata.GetBooks()
+		checkingLevel = (*metadata.Metadata)["checking"].(map[string]interface{})["checking_level"].(string)
+	} else {
+		language = dcs.GetLanguageFromRepoName(repo.LowerName)
+		subject = dcs.GetSubjectFromRepoName(repo.LowerName)
+	}
+
+	/* END DCS Customizations */
+
 	return &api.Repository{
 		ID:                        repo.ID,
 		Owner:                     repo.Owner.APIFormat(),
@@ -452,6 +549,12 @@ func (repo *Repository) innerAPIFormat(e Engine, mode AccessMode, isParent bool)
 		AllowSquash:               allowSquash,
 		AvatarURL:                 repo.avatarLink(e),
 		Internal:                  !repo.IsPrivate && repo.Owner.Visibility == api.VisibleTypePrivate,
+		Language:                  language,
+		Title:                     title,
+		Subject:                   subject,
+		Books:                     books,
+		CheckingLevel:             checkingLevel,
+		Catalog:                   catalog,
 	}
 }
 
@@ -1115,6 +1218,8 @@ func GetRepoInitFile(tp, name string) ([]byte, error) {
 		return options.License(cleanedName)
 	case "label":
 		return options.Labels(cleanedName)
+	case "schema":
+		return options.Schemas(cleanedName)
 	default:
 		return []byte{}, fmt.Errorf("Invalid init file type")
 	}

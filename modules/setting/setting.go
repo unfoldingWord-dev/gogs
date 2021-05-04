@@ -370,6 +370,12 @@ var (
 	// UILocation is the location on the UI, so that we can display the time on UI.
 	// Currently only show the default time.Local, it could be added to app.ini after UI is ready
 	UILocation = time.Local
+
+	/*** DCS Customizations ***/
+	Google struct {
+		GATrackingID string
+	}
+	/*** END DCS Customizations ***/
 )
 
 func getAppPath() (string, error) {
@@ -904,6 +910,10 @@ func NewContext() {
 	UI.DefaultShowFullName = Cfg.Section("ui").Key("DEFAULT_SHOW_FULL_NAME").MustBool(false)
 	UI.SearchRepoDescription = Cfg.Section("ui").Key("SEARCH_REPO_DESCRIPTION").MustBool(true)
 	UI.UseServiceWorker = Cfg.Section("ui").Key("USE_SERVICE_WORKER").MustBool(true)
+
+	/*** DCS Customizations ***/
+	Google.GATrackingID = Cfg.Section("other").Key("GA_TRACKING_ID").MustString("UA-60106521-5")
+	/*** END DCS Customizations ***/
 
 	HasRobotsTxt = com.IsFile(path.Join(CustomPath, "robots.txt"))
 

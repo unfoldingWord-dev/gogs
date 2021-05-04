@@ -87,18 +87,22 @@ func NewFuncMap() []template.FuncMap {
 		"AllowedReactions": func() []string {
 			return setting.UI.Reactions
 		},
-		"AvatarLink":    models.AvatarLink,
-		"Safe":          Safe,
-		"SafeJS":        SafeJS,
-		"Str2html":      Str2html,
-		"TimeSince":     timeutil.TimeSince,
-		"TimeSinceUnix": timeutil.TimeSinceUnix,
-		"RawTimeSince":  timeutil.RawTimeSince,
-		"FileSize":      base.FileSize,
-		"PrettyNumber":  base.PrettyNumber,
-		"Subtract":      base.Subtract,
-		"EntryIcon":     base.EntryIcon,
-		"MigrationIcon": MigrationIcon,
+		"AvatarLink":           models.AvatarLink,
+		"Safe":                 Safe,
+		"SafeJS":               SafeJS,
+		"Str2html":             Str2html,
+		"TimeSince":            timeutil.TimeSince,
+		"TimeSinceUnix":        timeutil.TimeSinceUnix,
+		"RawTimeSince":         timeutil.RawTimeSince,
+		"FileSize":             base.FileSize,
+		"PrettyNumber":         base.PrettyNumber,
+		"Subtract":             base.Subtract,
+		"EntryIcon":            base.EntryIcon,
+		"StringHasSuffix":      base.StringHasSuffix,
+		"ValidateJSONFile":     base.ValidateJSONFile,
+		"ValidateYAMLFile":     base.ValidateYAMLFile,
+		"ValidateManifestFile": base.ValidateManifestFile,
+		"MigrationIcon":        MigrationIcon,
 		"Add": func(a ...int) int {
 			sum := 0
 			for _, val := range a {
@@ -197,6 +201,11 @@ func NewFuncMap() []template.FuncMap {
 			}
 			return "tab-size-8"
 		},
+		/*** DCS Customizations ***/
+		"GATrackingID": func() string {
+			return setting.Google.GATrackingID
+		},
+		/*** END DCS Customizations ***/
 		"SubJumpablePath": func(str string) []string {
 			var path []string
 			index := strings.LastIndex(str, "/")

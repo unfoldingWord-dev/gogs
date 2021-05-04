@@ -1,9 +1,5 @@
 # cloud.google.com/go v0.46.3
 cloud.google.com/go/compute/metadata
-# code.gitea.io/gitea-vet v0.2.1
-## explicit
-code.gitea.io/gitea-vet
-code.gitea.io/gitea-vet/checks
 # code.gitea.io/sdk/gitea v0.13.2
 ## explicit
 code.gitea.io/sdk/gitea
@@ -49,6 +45,10 @@ gitea.com/macaron/session/postgres
 # gitea.com/macaron/toolbox v0.0.0-20190822013122-05ff0fc766b7
 ## explicit
 gitea.com/macaron/toolbox
+# gitea.com/unfoldingword/gitea-vet v0.2.5
+## explicit
+gitea.com/unfoldingword/gitea-vet
+gitea.com/unfoldingword/gitea-vet/checks
 # github.com/BurntSushi/toml v0.3.1
 github.com/BurntSushi/toml
 # github.com/PuerkitoBio/goquery v1.5.1
@@ -103,6 +103,7 @@ github.com/anmitsu/go-shlex
 github.com/asaskevich/govalidator
 # github.com/aymerick/douceur v0.2.0
 github.com/aymerick/douceur/css
+github.com/aymerick/douceur/parser
 # github.com/beorn7/perks v1.0.1
 github.com/beorn7/perks/quantile
 # github.com/blevesearch/bleve v1.0.10
@@ -169,8 +170,6 @@ github.com/boombuler/barcode/qr
 github.com/boombuler/barcode/utils
 # github.com/bradfitz/gomemcache v0.0.0-20190329173943-551aad21a668
 github.com/bradfitz/gomemcache/memcache
-# github.com/chris-ramon/douceur v0.2.0
-github.com/chris-ramon/douceur/parser
 # github.com/couchbase/gomemcached v0.0.0-20191004160342-7b5da2ec40b2
 ## explicit
 github.com/couchbase/gomemcached
@@ -244,6 +243,9 @@ github.com/fatih/color
 github.com/fatih/structtag
 # github.com/fsnotify/fsnotify v1.4.9
 github.com/fsnotify/fsnotify
+# github.com/ghodss/yaml v1.0.0
+## explicit
+github.com/ghodss/yaml
 # github.com/gliderlabs/ssh v0.2.2
 ## explicit
 github.com/gliderlabs/ssh
@@ -566,7 +568,7 @@ github.com/mgechev/revive/rule
 # github.com/mholt/archiver/v3 v3.3.0
 ## explicit
 github.com/mholt/archiver/v3
-# github.com/microcosm-cc/bluemonday v1.0.3-0.20191119130333-0a75d7616912 => github.com/lunny/bluemonday v1.0.5-0.20201227154428-ca34796141e8
+# github.com/microcosm-cc/bluemonday v1.0.6
 ## explicit
 github.com/microcosm-cc/bluemonday
 # github.com/minio/md5-simd v1.1.0
@@ -590,6 +592,7 @@ github.com/minio/sha256-simd
 ## explicit
 github.com/mitchellh/go-homedir
 # github.com/mitchellh/mapstructure v1.3.2
+## explicit
 github.com/mitchellh/mapstructure
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 github.com/modern-go/concurrent
@@ -740,6 +743,13 @@ github.com/willf/bitset
 github.com/xanzy/go-gitlab
 # github.com/xanzy/ssh-agent v0.2.1
 github.com/xanzy/ssh-agent
+# github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f
+github.com/xeipuuv/gojsonpointer
+# github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415
+github.com/xeipuuv/gojsonreference
+# github.com/xeipuuv/gojsonschema v1.2.0
+## explicit
+github.com/xeipuuv/gojsonschema
 # github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8
 github.com/xi2/xz
 # github.com/yohcop/openid-go v1.0.0
@@ -809,7 +819,7 @@ golang.org/x/crypto/ssh/knownhosts
 # golang.org/x/mod v0.3.0
 golang.org/x/mod/module
 golang.org/x/mod/semver
-# golang.org/x/net v0.0.0-20200904194848-62affa334b73
+# golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
 ## explicit
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -828,7 +838,7 @@ golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
-# golang.org/x/sys v0.0.0-20200918174421-af09f7315aff
+# golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44
 ## explicit
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
@@ -979,4 +989,3 @@ xorm.io/xorm/names
 xorm.io/xorm/schemas
 xorm.io/xorm/tags
 # github.com/hashicorp/go-version => github.com/6543/go-version v1.2.4
-# github.com/microcosm-cc/bluemonday => github.com/lunny/bluemonday v1.0.5-0.20201227154428-ca34796141e8

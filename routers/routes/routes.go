@@ -32,7 +32,9 @@ import (
 	"code.gitea.io/gitea/modules/validation"
 	"code.gitea.io/gitea/routers"
 	"code.gitea.io/gitea/routers/admin"
+	"code.gitea.io/gitea/routers/api/catalog" // DCS Customizations
 	apiv1 "code.gitea.io/gitea/routers/api/v1"
+	"code.gitea.io/gitea/routers/dcs" // DCS Customizations
 	"code.gitea.io/gitea/routers/dev"
 	"code.gitea.io/gitea/routers/events"
 	"code.gitea.io/gitea/routers/org"
@@ -367,7 +369,7 @@ func RegisterRoutes(m *macaron.Macaron) {
 		m.Get("/users", routers.ExploreUsers)
 		m.Get("/organizations", routers.ExploreOrganizations)
 		m.Get("/code", routers.ExploreCode)
-	}, ignSignIn)
+	}, reqSignIn) // DCS Customizations - changed ignSignIn to reqSignIn
 	m.Combo("/install", routers.InstallInit).Get(routers.Install).
 		Post(bindIgnErr(auth.InstallForm{}), routers.InstallPost)
 	m.Get("/^:type(issues|pulls)$", reqSignIn, user.Issues)
@@ -1118,6 +1120,9 @@ func RegisterRoutes(m *macaron.Macaron) {
 
 	if setting.API.EnableSwagger {
 		m.Get("/swagger.v1.json", templates.JSONRenderer(), routers.SwaggerV1Json)
+		/*** DCS Customizations ***/
+		m.Get("/swagger.catalog.json", templates.JSONRenderer(), routers.SwaggerCatalogJSON)
+		/*** END DCS Customizations ***/
 	}
 
 	var handlers []macaron.Handler
@@ -1166,6 +1171,16 @@ func RegisterRoutes(m *macaron.Macaron) {
 
 		m.Get("/metrics", routers.Metrics)
 	}
+
+	/*** DCS Customizations ***/
+	m.Get("/about", dcs.About)
+	m.Group("/catalog", func() {
+		m.Get("", dcs.Catalog)
+	}, ignSignIn)
+	m.Group("/api/catalog", func() {
+		catalog.RegisterRoutes(m)
+	}, handlers...)
+	/*** END DCS Customizations ***/
 
 	// Not found handler.
 	m.NotFound(routers.NotFound)
